@@ -14,12 +14,13 @@ struct dataToken {
 	int immigration = 0;
 };
 
+
 struct dataQuestion {
 	int id = -1;
 	string question = "empty";
 	int answer = -1; // 0 (false), 1 (true), 2 (others) 
-	dataToken tokensYes;
-	dataToken tokensNo;
+	ofxJSONElement dataTokenYes;
+	ofxJSONElement dataTokenNo;
 };
 
 class QuestionRestFul
@@ -27,6 +28,8 @@ class QuestionRestFul
 public:
 	QuestionRestFul();
 	~QuestionRestFul();
+
+	void setup();
 
 
 	dataQuestion theQuestion;

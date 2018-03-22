@@ -93,6 +93,7 @@ void webServicesManager::setText(ofx::JSONRPC::MethodArgs& args)
 
 	//1rs Add Question to vector
 	QuestionRestFul myAuxQuest;
+	
 	if (args.params.size() == 2) {
 		myAuxQuest.theQuestion.id = ofToInt(args.params[0].asString());
 		myAuxQuest.theQuestion.question = args.params[1].asString();
