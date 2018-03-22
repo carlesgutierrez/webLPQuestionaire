@@ -5,6 +5,8 @@
 #include "ofxJSONRPC.h"
 #include "ofxJSON.h"
 
+#include "SQLiteCpp.h"
+
 
 class webServicesManager
 {
