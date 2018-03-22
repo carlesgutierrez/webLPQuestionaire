@@ -27,15 +27,26 @@ void webServicesManager::setup()
 
 
 	// Register RPC methods.
-	server.registerMethod("get-questions",
-		"Returns a random chunk of text to the client.",
+	server.registerMethod("get-questions-server",
+		"Returns all questions",
 		this,
-		&webServicesManager::getQuestions);
+		&webServicesManager::doGet);
 
-	server.registerMethod("set-question",
-		"Sets text from the user.",
+	server.registerMethod("update-questionId-server",
+		"Returns thta question if extist.",
 		this,
-		&webServicesManager::setText);
+		&webServicesManager::doPatch);
+	
+
+	server.registerMethod("set-question-server",
+		"Add a new question",
+		this,
+		&webServicesManager::doPost);
+
+	server.registerMethod("delete-question-server",
+		"Add a new question",
+		this,
+		&webServicesManager::doDelete);
 
 	// Start the server.
 	server.start();
@@ -52,50 +63,20 @@ void webServicesManager::draw()
 
 
 //--------------------------------------------
-void webServicesManager::doPost(string _quest, dataToken _tokensYes, dataToken _tokensNo)
+void webServicesManager::doPost(ofx::JSONRPC::MethodArgs & args)
 {
-}
-
-//--------------------------------------------
-void webServicesManager::doRead(int _id)
-{
-}
-
-//--------------------------------------------
-void webServicesManager::doPatch(string _quest, int _id, dataToken _tokensYes, dataToken _tokensNo)
-{
-}
-
-//--------------------------------------------
-void webServicesManager::doDelete(int _id)
-{
-}
-
-
-
-void webServicesManager::getQuestions(ofx::JSONRPC::MethodArgs& args)
-{
-	// Set the result equal to the substring.
-	args.result = getMyQuestions();
-	//args.params = getMyQuestions();
-	cout << "This is going to give back our questions" << endl;
-	//cout << args.result << endl;
-	ofLogVerbose("webServicesManager::getText") << args.result;//.asString()
-}
-
-
-void webServicesManager::setText(ofx::JSONRPC::MethodArgs& args)
-{
-	cout << "All args to setText are" << args.params << endl;
-	for (int i = 0; i < args.params.size(); i++) {
-		cout << "Arg[" + ofToString(i, 0) + "]=" << args.params[i] << endl;
+	if (ofGetLogLevel() == OF_LOG_VERBOSE) {
+		cout << "All args to doPost are" << args.params << endl;
+		for (int i = 0; i < args.params.size(); i++) {
+			cout << "Arg[" + ofToString(i, 0) + "]=" << args.params[i] << endl;
+		}
 	}
 
 	//1rs Add Question to vector
 	QuestionRestFul myAuxQuest;
-	
+
 	if (args.params.size() == 2) {
-		myAuxQuest.theQuestion.id = ofToInt(args.params[0].asString());
+		myAuxQuest.theQuestion.id = myQuestions.size()+1;
 		myAuxQuest.theQuestion.question = args.params[1].asString();
 		//myAuxQuest.question.answer = ofToInt(args.params[2].asString()); //Do not crash if there is nothing. That's good.
 		myQuestions.push_back(myAuxQuest);
@@ -105,11 +86,75 @@ void webServicesManager::setText(ofx::JSONRPC::MethodArgs& args)
 
 	// Set the user text.
 	setUserText(args.params.asString());
-	ofLogVerbose("webServicesManager::setText") << args.params.asString();
+	ofLogVerbose("webServicesManager::doPost") << args.params.asString();
+}
+
+//--------------------------------------------
+void webServicesManager::doGet(ofx::JSONRPC::MethodArgs & args)
+{
+	// Set the result equal to the substring.
+	args.result = getMyQuestionsData();
+
+	ofLogVerbose("webServicesManager::getQuestions") << args.result;//.asString()
+}
+
+//--------------------------------------------
+void webServicesManager::doPatch(ofx::JSONRPC::MethodArgs & args)
+{
+	if (ofGetLogLevel() == OF_LOG_VERBOSE) {
+		cout << "Update Question Id" << args.params << endl;
+		for (int i = 0; i < args.params.size(); i++) {
+			cout << "Arg[" + ofToString(i, 0) + "]=" << args.params[i] << endl;
+		}
+	}
+
+	// Set the result equal to the substring.
+	int auxIdQuestion = ofToInt(args.params[0].asString());//without this cast to String this break this function
+	string newQuestion = args.params[1].asString();
+
+	bool bUpdated = updateQuestionData(auxIdQuestion, newQuestion);
+	if (bUpdated) ofLogVerbose("Question[" + ofToString(auxIdQuestion, 0) + "] updated");
+}
+
+//--------------------------------------------
+void webServicesManager::doDelete(ofx::JSONRPC::MethodArgs& args)
+{
+	int id2Delete = ofToInt(args.params.asString());
+	ofLogVerbose("id[" + ofToString(id2Delete, 0) + "] to Delete");
+	bool bUpdated = deleteQuestionData(id2Delete);
+	if (bUpdated) ofLogVerbose("Question[" + ofToString(id2Delete, 0) + "] deleted");
 }
 
 
-ofxJSONElement webServicesManager::getMyQuestions()
+//------------------------------------------------------
+bool webServicesManager::updateQuestionData(int auxIdQuestion,string newQuestion) {
+	bool bFoundQuestion = false;
+	for (int i = 0; i < myQuestions.size(); i++) {
+		if (myQuestions[i].theQuestion.id == auxIdQuestion) {
+			bFoundQuestion = true;
+			myQuestions[i].theQuestion.question = newQuestion;
+		}
+	}
+
+	return bFoundQuestion;
+}
+
+//------------------------------------------------------
+bool webServicesManager::deleteQuestionData(int auxIdQuestion) {
+	bool bFoundQuestion = false;
+	for (int i = 0; i < myQuestions.size(); i++) {
+		if (myQuestions[i].theQuestion.id == auxIdQuestion) {
+			bFoundQuestion = true;
+			myQuestions.erase(myQuestions.begin() +i);
+		}
+	}
+
+	return bFoundQuestion;
+}
+
+
+//------------------------------------------------------
+ofxJSONElement webServicesManager::getMyQuestionsData()
 {
 
 	ofxJSONElement thatSavedQuestions;
@@ -120,31 +165,16 @@ ofxJSONElement webServicesManager::getMyQuestions()
 	}
 
 	return thatSavedQuestions;
-
-	//static const std::size_t LENGTH = 140;
-
-	//std::unique_lock<std::mutex> lock(mutex);
-
-	//// Generate a random start index.
-	//std::size_t startIndex = (std::size_t)ofRandom(ipsum.length());
-
-	//// Ensure that the length is valid.
-	//std::size_t length = (startIndex + LENGTH) < ipsum.length() ? LENGTH : string::npos;
-
-	//// return the result equal to the substring.
-	//return ipsum.substr(startIndex, length);
-
-
 }
 
-
+//------------------------------------------------------
 std::string webServicesManager::getUserText() const
 {
 	std::unique_lock<std::mutex> lock(mutex);
 	return userText;
 }
 
-
+//------------------------------------------------------
 void webServicesManager::setUserText(const std::string& text)
 {
 	std::unique_lock<std::mutex> lock(mutex);

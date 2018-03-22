@@ -14,20 +14,38 @@ public:
 	void setup();
 	void update();
 	void draw();
+
 public: 
+
+	//will return id question created
+	void doPost(ofx::JSONRPC::MethodArgs & args);
+
+	//get
+	void doGet(ofx::JSONRPC::MethodArgs & args);
+	
+	//update
+	void doPatch(ofx::JSONRPC::MethodArgs & args);
+
+	//remove
+	void doDelete(ofx::JSONRPC::MethodArgs & args);
+
+
+private:
 
 	vector<QuestionRestFul> myQuestions;
 
 	// Registered methods.
+	void updateQuestionId(ofx::JSONRPC::MethodArgs & args);
+	bool updateQuestionData(int auxIdQuestion, string newQuestion);
+	bool deleteQuestionData(int auxIdQuestion);
 	void getQuestions(ofx::JSONRPC::MethodArgs& args);
-	void setText(ofx::JSONRPC::MethodArgs& args);
 
 	/// \brief The server that handles the JSONRPC requests.
 	ofx::HTTP::JSONRPCServer server;
 
 	/// \brief Get a snippet of random text in a thread-safe way.
 	/// \returns The snippet of random text.
-	ofxJSONElement getMyQuestions();
+	ofxJSONElement getMyQuestionsData();
 
 	/// \brief Get the user text in a thread-safe way.
 	/// \returns The user text.
@@ -36,20 +54,6 @@ public:
 	/// \brief Set the user text in a thread-safe way.
 	/// \param text the user text to set.
 	void setUserText(const std::string& text);
-
-public: 
-
-	//will return id question created
-	void doPost(string _quest, dataToken _tokensYes, dataToken _tokensNo);
-
-	//will return dataQuestion
-	void doRead(int _id);
-	
-	//Will return Boolean
-	void doPatch(string _quest, int _id, dataToken _tokensYes, dataToken _tokensNo);//update 
-
-	//Will return Boolean
-	void doDelete(int _id);
 
 private:
 	// A custom logging channel to mirror all log messages to the web clients.

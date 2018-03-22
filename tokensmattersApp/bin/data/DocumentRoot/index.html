@@ -27,11 +27,11 @@
     </div>
 
     <div class="container">
-        <h1>Basic JSONRPC Websocket Server Demo</h1>
+        <h1>Questionaire Manager / TokensMatters</h1>
         <br>
         <blockquote>
             <p>
-                <code>ofx::HTTP::BasicJSONRPCServer</code> is a simple server for processing JSONRPC calls.
+                <code>ofx::HTTP::BasicJSONRPCServer</code> a simple server to proces JSONRPC via Websockets.  
             </p>
         </blockquote>
 
@@ -43,7 +43,6 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <input id="idquestion-to-send" type="number" name="quantity" min="1" max="5">
                     <input id="question-to-send" type="text" class="form-control">
                     <button id="set-question" class="btn btn-default" type="button">Add Question</button>
                 </div>
@@ -62,7 +61,7 @@
                         
                     </ul>
                   <span class="input-group-btn">
-                    <button id="get-Questions" class="btn btn-default" type="button">Receive</button>
+                    <button id="get-questions" class="btn btn-default" type="button">Receive</button>
                   </span>
                 </div>
             </div>
@@ -75,9 +74,9 @@
                 </div>
             </div>
             <div class="panel-footer">
-               <input id="idquestion-to-delete" type="number" name="quantity" min="1" max="5">
-               <input id="question-to-send" type="text" class="form-control">
-               <button id="pong" type="button" class="btn btn-default">Update</button>
+               <input id="idquestion-to-update" type="number" name="quantity" min="1" max="999">
+               <input id="question-to-update" type="text" class="form-control">
+               <button id="update-question" class="btn btn-default" type="button">Update</button>
             </div>
         </div>
 
@@ -88,8 +87,8 @@
                 </div>
             </div>
             <div class="panel-footer">
-               <input id="idquestion-to-delete" type="number" name="quantity" min="1" max="5">
-               <button id="ping" type="button" class="btn btn-default">Delete</button>
+               <input id="idquestion-to-delete" type="number" name="quantity" min="1" max="999">
+               <button id="delete-question" class="btn btn-default" type="button">Delete</button>
             </div>
         </div>
     </div>
