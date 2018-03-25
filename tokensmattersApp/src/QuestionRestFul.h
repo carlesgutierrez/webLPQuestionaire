@@ -4,6 +4,7 @@
 
 #include "ofxJSONRPC.h"
 #include "ofxJSON.h"
+#include "ofxEasing.h"
 
 
 struct dataToken { //TODO chahge this direct from JSON format at Defaoult constructor
@@ -30,8 +31,8 @@ public:
 	~QuestionRestFul();
 
 	void setup();
-
-	void draw();
+	void update();
+	void draw(int x, int y);
 
 	void simulateTokensValues();
 
@@ -41,7 +42,8 @@ public:
 	//vars for visualization
 	float initTime;
 	float endPosition;
-	std::vector<float> tokenYPosValues;
+	std::vector<float> tokenYPosEasing, tokenNPosEasing;
+	bool bStartAnim = false;
 
 };
 

@@ -16,12 +16,16 @@ QuestionRestFul::QuestionRestFul()
 	immigrationValue = ofToString(0, 0);
 
 	string dataTokenDefault =
-		"{\"incomeTax\":" + incomeTaxValue +
-		", \"publicHealth\" : " + publicHealthValue +
-		", \"entrepreneurship\" : " + entrepreneurshipValue +
-		", \"immigration\" : " + immigrationValue + " }";
+		"{\"#0 incomeTax\":" + incomeTaxValue +
+		", \"#1 publicHealth\" : " + publicHealthValue +
+		", \"#2 entrepreneurship\" : " + entrepreneurshipValue +
+		", \"#3 immigration\" : " + immigrationValue + " }";
 	theQuestion.dataTokenYes.parse(dataTokenDefault);
 	theQuestion.dataTokenNo.parse(dataTokenDefault);
+
+	//For Drawing
+	tokenYPosEasing.resize(4);
+	tokenNPosEasing.resize(4);
 }
 
 //--------------------------------------------
@@ -37,9 +41,78 @@ void QuestionRestFul::setup()
 
 
 //--------------------------------------------
-void QuestionRestFul::draw()
+void QuestionRestFul::update()
 {
+	//update Visualizations
+	//Update
+	if (ofGetKeyPressed()) {
+		bStartAnim = true;
+		initTime = ofGetElapsedTimef();
+	}
 
+	auto duration = 1.f;
+	auto endTime = initTime + duration;
+	auto now = ofGetElapsedTimef();
+	
+	vector<string>tokensnames = theQuestion.dataTokenYes.getMemberNames();
+
+	//incomeTax for now
+	for (int i = 0; i < tokenYPosEasing.size(); i++) {
+		
+		int endPosition = ofMap(theQuestion.dataTokenYes[tokensnames[i]].asFloat(),-5, 5, -100, 100);
+		tokenYPosEasing[i] = ofxeasing::map_clamp(now, initTime, endTime, 0, endPosition, &ofxeasing::linear::easeIn);
+
+	}
+
+
+}
+
+
+//--------------------------------------------
+void QuestionRestFul::draw(int _x, int _y)
+{
+	ofPushStyle();
+	ofSetLineWidth(5);
+	//draw Visualizations
+	ofSetColor(ofColor::darkCyan);
+	
+	auto w = 20;
+	int tokensNamesMaxWidth = 150;
+	int gapXTokens = 100;
+	int gapYNameTokens = 20;
+	int marginYTokens = 60;
+
+	ofSetColor(ofColor::white);
+	ofDrawBitmapStringHighlight(theQuestion.question, _x, _y);
+	ofSetColor(ofColor::darkCyan);
+
+	//draw Text Tokens vertical drawn at left colum
+	vector<string>tokensnamesVertical = theQuestion.dataTokenYes.getMemberNames();//Yes or not same name
+	for (int i = 0; i < tokenYPosEasing.size(); i++) {
+		ofDrawBitmapStringHighlight(tokensnamesVertical[i], _x - tokensNamesMaxWidth, _y + gapYNameTokens * i);
+	}
+
+	//Tokens Yes
+	for (int i = 0; i < tokenYPosEasing.size(); i++) {
+		ofDrawRectangle(_x+i*gapXTokens, _y + marginYTokens, w, tokenYPosEasing[i]); // 0 IncomeTax, 1 ... , ..
+	}
+
+	//Tokens NO
+	//for (int i = 0; i < tokenYPosEasing.size(); i++) {
+	//	ofDrawRectangle(_x + i*gapXTokens, _y, w, tokenYPosEasing[i]); // 0 IncomeTax, 1 ... , ..
+	//}
+
+	//draw Text Tokens horizontal
+	vector<string>tokensnamesHorizontal = theQuestion.dataTokenYes.getMemberNames();//Yes or not same name
+	for (int i = 0; i < tokenYPosEasing.size(); i++) {
+		vector<string> slitedName = ofSplitString(tokensnamesHorizontal[i], " ");
+		ofDrawBitmapStringHighlight(slitedName[0], _x+ i*gapXTokens, _y + marginYTokens * 3 );
+	}
+
+	//string name;
+	//vector<string> slitedName = ofSplitString(name, " ");
+	
+	ofPopStyle();
 }
 
 
@@ -47,11 +120,6 @@ void QuestionRestFul::draw()
 //--------------------------------------------
 void QuestionRestFul::simulateTokensValues()
 {
-	////Creating model that tokens user interaction will use dinamically
-	//string incomeTaxValue;
-	//string publicHealthValue;
-	//string entrepreneurshipValue;
-	//string immigrationValue;
 
 	int incomeTaxValue;
 	int immigrationValue;
@@ -63,12 +131,12 @@ void QuestionRestFul::simulateTokensValues()
 	entrepreneurshipValue = (int)ofRandom(-5, 5);
 	immigrationValue = (int)ofRandom(-5, 5);
 
-	theQuestion.dataTokenYes["incomeTax"] = incomeTaxValue;
-	theQuestion.dataTokenYes["publicHealth"] = publicHealthValue;
-	theQuestion.dataTokenYes["entrepreneurship"] = entrepreneurshipValue;
-	theQuestion.dataTokenYes["immigration"] = immigrationValue;
+	theQuestion.dataTokenYes["#0 incomeTax"] = incomeTaxValue;
+	theQuestion.dataTokenYes["#1 publicHealth"] = publicHealthValue;
+	theQuestion.dataTokenYes["#2 entrepreneurship"] = entrepreneurshipValue;
+	theQuestion.dataTokenYes["#3 immigration"] = immigrationValue;
 
-	cout << theQuestion.dataTokenYes << endl;
+	ofLogVerbose() << "Random tokens Yes:" << theQuestion.dataTokenYes;
 
 
 	incomeTaxValue = (int)ofRandom(-5, 5);
@@ -76,32 +144,13 @@ void QuestionRestFul::simulateTokensValues()
 	entrepreneurshipValue = (int)ofRandom(-5, 5);
 	immigrationValue = (int)ofRandom(-5, 5);
 
-	theQuestion.dataTokenNo["incomeTax"] = incomeTaxValue;
-	theQuestion.dataTokenNo["publicHealth"] = publicHealthValue;
-	theQuestion.dataTokenNo["entrepreneurship"] = entrepreneurshipValue;
-	theQuestion.dataTokenNo["immigration"] = immigrationValue;
+	theQuestion.dataTokenNo["#0 incomeTax"] = incomeTaxValue;
+	theQuestion.dataTokenNo["#1 publicHealth"] = publicHealthValue;
+	theQuestion.dataTokenNo["#2 entrepreneurship"] = entrepreneurshipValue;
+	theQuestion.dataTokenNo["#3 immigration"] = immigrationValue;
 
-	cout << theQuestion.dataTokenNo << endl;
-	//string dataTokenYes_text =
-	//	"{\"incomeTax\":" + incomeTaxValue +
-	//	", \"publicHealth\" : " + publicHealthValue +
-	//	", \"entrepreneurship\" : " + entrepreneurshipValue +
-	//	", \"immigration\" : " + immigrationValue + " }";
-	//theQuestion.dataTokenYes.parse(dataTokenYes_text);
+	ofLogVerbose() << "Random tokens No:" << theQuestion.dataTokenNo;
 
-	//incomeTaxValue = ofToString((int)ofRandom(-5, 5), 0);
-	//publicHealthValue = ofToString((int)ofRandom(-5, 5), 0);
-	//entrepreneurshipValue = ofToString((int)ofRandom(-5, 5), 0);
-	//immigrationValue = ofToString((int)ofRandom(-5, 5), 0);
-
-	//string dataTokenNo_text =
-	//	"{\"incomeTax\":" + incomeTaxValue +
-	//	", \"publicHealth\" : " + publicHealthValue +
-	//	", \"entrepreneurship\" : " + entrepreneurshipValue +
-	//	", \"immigration\" : " + immigrationValue + " }";	theQuestion.dataTokenNo.parse(dataTokenNo_text);
-
-	//cout << "Default Tokens at Question Constructor" << endl;
-	//cout << theQuestion.dataTokenNo << endl;
 }
 
 

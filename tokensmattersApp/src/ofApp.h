@@ -4,6 +4,7 @@
 #include "ofMain.h"
 
 #include "webServicesManager.h"
+#include "FrontEndApp.h"
 
 class ofApp : public ofBaseApp
 {
@@ -15,5 +16,5 @@ public:
 private:
 
 	webServicesManager myWeb;
-
+	FrontEndApp myFronEnd;
 };

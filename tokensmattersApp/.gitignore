@@ -13,9 +13,10 @@
 [Bb]uild/
 [Oo]bj/
 ##################
-##Extra Ignore for VS projects. Not working.
+##Extra Ignore for VS projects. but not working once they are inside project.
 */obj/*
 *.db
+*.pdb
 *.opendb
 
 *.o

@@ -8,7 +8,7 @@ void ofApp::setup()
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
 	myWeb.setup(); //back-end
-	//myFrontEndApp.setup();//Let's set a refernce to our web data service to get direct access into data.
+	myFronEnd.setup(&myWeb);//Let's set a refernce to our web data service to get direct access into data.
 
 }
 
@@ -18,6 +18,10 @@ void ofApp::draw()
 	ofBackground(255);
 	
 	myWeb.draw();
+
+
+	myFronEnd.update();
+	myFronEnd.draw();
 }
 
 

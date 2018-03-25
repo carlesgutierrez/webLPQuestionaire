@@ -32,10 +32,11 @@ public:
 	//remove
 	void doDelete(ofx::JSONRPC::MethodArgs & args);
 
+	//only for develop
+	vector<QuestionRestFul> myQuestions;
 
 private:
 
-	vector<QuestionRestFul> myQuestions;
 
 	// Registered methods.
 	void updateQuestionId(ofx::JSONRPC::MethodArgs & args);

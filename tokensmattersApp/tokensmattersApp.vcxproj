@@ -174,7 +174,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="src\DbQuestions.cpp" />
-    <ClCompile Include="src\myFrontEndApp.cpp" />
+    <ClCompile Include="src\FrontEndApp.cpp" />
     <ClCompile Include="src\QuestionRestFul.cpp" />
     <ClCompile Include="src\webServicesManager.cpp" />
     <ClCompile Include="..\..\..\addons\ofxHTTP\libs\ofxHTTP\src\AuthScope.cpp" />
@@ -291,7 +291,7 @@
   <ItemGroup>
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="src\DbQuestions.h" />
-    <ClInclude Include="src\myFrontEndApp.h" />
+    <ClInclude Include="src\FrontEndApp.h" />
     <ClInclude Include="src\QuestionRestFul.h" />
     <ClInclude Include="src\webServicesManager.h" />
     <ClInclude Include="..\..\..\addons\ofxEasing\src\easing_terms_of_use.html" />
