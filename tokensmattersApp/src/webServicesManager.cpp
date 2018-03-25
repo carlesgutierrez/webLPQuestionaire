@@ -53,7 +53,12 @@ void webServicesManager::setup()
 
 	// Launch a browser with the address of the server.
 	ofLaunchBrowser(server.getURL());
+
+	//Sqlite
+	std::string exampleDB = ofToDataPath("tokensmatters.sqlite", true);
+	myDB.setupDB(exampleDB, "question", "tokensNo", "tokensYes");
 }
+
 
 void webServicesManager::draw()
 {
@@ -68,6 +73,7 @@ void webServicesManager::doPost(ofx::JSONRPC::MethodArgs & args)
 	if (ofGetLogLevel() == OF_LOG_VERBOSE) {
 		cout << "All args to doPost are" << args.params << endl;
 		for (int i = 0; i < args.params.size(); i++) {
+			//TOcheck param 0 Null
 			cout << "Arg[" + ofToString(i, 0) + "]=" << args.params[i] << endl;
 		}
 	}
@@ -78,14 +84,17 @@ void webServicesManager::doPost(ofx::JSONRPC::MethodArgs & args)
 	if (args.params.size() == 2) {
 		myAuxQuest.theQuestion.id = myQuestions.size()+1;
 		myAuxQuest.theQuestion.question = args.params[1].asString();
+		myAuxQuest.simulateTokensValues();// Simulate my content
 		//myAuxQuest.question.answer = ofToInt(args.params[2].asString()); //Do not crash if there is nothing. That's good.
 		myQuestions.push_back(myAuxQuest);
+		
+
+		//Trying sqlite test // Fails something here
+		DbQuestions myDB;
+		myDB.insertQuestionData(myAuxQuest);
 	}
 	//TODO Later update it into mySql item
 
-
-	// Set the user text.
-	setUserText(args.params.asString());
 	ofLogVerbose("webServicesManager::doPost") << args.params.asString();
 }
 
@@ -165,18 +174,4 @@ ofxJSONElement webServicesManager::getMyQuestionsData()
 	}
 
 	return thatSavedQuestions;
-}
-
-//------------------------------------------------------
-std::string webServicesManager::getUserText() const
-{
-	std::unique_lock<std::mutex> lock(mutex);
-	return userText;
-}
-
-//------------------------------------------------------
-void webServicesManager::setUserText(const std::string& text)
-{
-	std::unique_lock<std::mutex> lock(mutex);
-	userText = text;
 }

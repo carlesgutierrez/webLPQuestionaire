@@ -6,6 +6,7 @@
 #include "ofxJSON.h"
 
 #include "SQLiteCpp.h"
+#include "DbQuestions.h"
 
 
 class webServicesManager
@@ -49,13 +50,8 @@ private:
 	/// \returns The snippet of random text.
 	ofxJSONElement getMyQuestionsData();
 
-	/// \brief Get the user text in a thread-safe way.
-	/// \returns The user text.
-	std::string getUserText() const;
-
-	/// \brief Set the user text in a thread-safe way.
-	/// \param text the user text to set.
-	void setUserText(const std::string& text);
+	DbQuestions myDB;
+	bool bVectorDataBaseMode = true;
 
 private:
 	// A custom logging channel to mirror all log messages to the web clients.

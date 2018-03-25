@@ -1,3 +1,4 @@
+ofxEasing
 ofxHTTP
 ofxIO
 ofxJSON

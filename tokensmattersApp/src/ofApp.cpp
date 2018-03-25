@@ -7,7 +7,8 @@ void ofApp::setup()
 
 	ofSetLogLevel(OF_LOG_VERBOSE);
 
-	myWeb.setup();
+	myWeb.setup(); //back-end
+	//myFrontEndApp.setup();//Let's set a refernce to our web data service to get direct access into data.
 
 }
 
