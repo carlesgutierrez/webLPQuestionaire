@@ -1,5 +1,6 @@
 ofxEasing
 ofxHTTP
+ofxImGui
 ofxIO
 ofxJSON
 ofxJSONRPC

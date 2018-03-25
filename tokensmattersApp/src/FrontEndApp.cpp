@@ -18,6 +18,9 @@ void FrontEndApp::setup(webServicesManager* _webServices){
 
 	myCam.setup(320, 240);
 
+	//required call
+	gui.setup();
+	gui.setTheme(new ThemeLocalProjects());
 }
 
 
@@ -50,6 +53,9 @@ void FrontEndApp::draw() {
 	ofSetColor(255);
 	drawVisualizationsTokens(myDrawQuestionaireArea.getPosition().x, myDrawQuestionaireArea.getPosition().y);
 
+	//GUI
+	ofSetColor(255);
+	drawGui();
 }
 
 //--------------------------------------------
@@ -57,6 +63,14 @@ void FrontEndApp::updateVisualizationTokens() {
 	for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
 		point2MyWeb->myQuestions[i].update();
 	}
+}
+
+
+//--------------------------------------------
+void FrontEndApp::drawGui() {
+	gui.begin();
+	ImGui::Text("Hello Gui");
+	gui.end();
 }
 
 //--------------------------------------------

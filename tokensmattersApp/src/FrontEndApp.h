@@ -5,6 +5,8 @@
 #include "QuestionRestFul.h"
 #include "webServicesManager.h"
 //#include "SQLiteCpp.h"
+#include "ofxImGui.h"
+#include "ThemeLocalProjects.h"
 
 
 class FrontEndApp
@@ -15,6 +17,7 @@ public:
 	void setup(webServicesManager* _webServices);
 	void update();
 	void updateVisualizationTokens();
+	void drawGui();
 	void drawVisualizationsTokens(int x, int y);
 	int getActiveQuestion();
 	void draw();
@@ -22,7 +25,7 @@ public:
 public: 
 
 	webServicesManager* point2MyWeb;
-
+	ofxImGui::Gui gui;
 	ofVideoGrabber myCam;
 };
 
