@@ -19,8 +19,8 @@ void FrontEndApp::setup(webServicesManager* _webServices){
 	myCam.setup(320, 240);
 
 	//required call
-	gui.setup();
-	gui.setTheme(new ThemeLocalProjects());
+	gui.setup(new ThemeLocalProjects());
+	//gui.setTheme(new ThemeLocalProjects());
 }
 
 
@@ -37,14 +37,14 @@ void FrontEndApp::draw() {
 
 	int margin = 10;
 
-	ofSetColor(ofColor::darkSlateGray);
-	ofRectangle myCameraArea = ofRectangle(margin, margin, myCam.getWidth() - margin, myCam.getHeight() - margin);
+	ofSetColor(ofColor::lightGray);
+	ofRectangle myCameraArea = ofRectangle(margin+ myDrawFineTunning.guiCameraPosX, margin+ myDrawFineTunning.guiCameraPosY, myCam.getWidth() + margin*2, myCam.getHeight() + margin*2);
 	ofDrawRectangle(myCameraArea);
 
 	ofSetColor(255);
-	myCam.draw(myCameraArea.getPosition().x, myCameraArea.getPosition().y);
+	myCam.draw(myCameraArea.getPosition().x, myCameraArea.getPosition().y+ myDrawFineTunning.guiCameraPosY);
 
-	ofSetColor(ofColor::lightGray);
+	ofSetColor(ofColor::white);
 	int posXQuestionareArea = myCam.getWidth() + margin;
 	int sizeWQuestionareArea = ofGetWidth() - posXQuestionareArea;
 	ofRectangle myDrawQuestionaireArea = ofRectangle(posXQuestionareArea, margin, sizeWQuestionareArea - margin, 500);
@@ -69,17 +69,24 @@ void FrontEndApp::updateVisualizationTokens() {
 //--------------------------------------------
 void FrontEndApp::drawGui() {
 	gui.begin();
-	ImGui::Text("GUI");
+	if (ImGui::Button("Camera settings")){
+		myCam.videoSettings();
+	}
 	if(ImGui::CollapsingHeader("Fine Tunning GUI Items Locations")) {
 		
 		bool bModifs = false;
-		if(ImGui::SliderInt("QuestionPos X", &myDrawFineTunning.guiQuestionPosX, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("QuestionPos Y", &myDrawFineTunning.guiQuestionPosY, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("guiInfoTokensPos X", &myDrawFineTunning.guiInfoTokensPosX, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("guiInfoTokensPos Y", &myDrawFineTunning.guiInfoTokensPosY, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("guiTokensBarsX ", &myDrawFineTunning.guiTokensBarsX, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("guiInfoTokensIdsPosX X", &myDrawFineTunning.guiInfoTokensIdsPosX, -200, 200))bModifs = true;
+		ImGui::PushItemWidth(50);
+		if (ImGui::SliderInt("Camera X", &myDrawFineTunning.guiCameraPosX, -200, 200))bModifs = true;
+		if (ImGui::SliderInt("Camera Y", &myDrawFineTunning.guiCameraPosY, -200, 200))bModifs = true;
+		if(ImGui::SliderInt("Question X", &myDrawFineTunning.guiQuestionPosX, -400, 400))bModifs = true;
+		if(ImGui::SliderInt("Question Y", &myDrawFineTunning.guiQuestionPosY, -200, 200))bModifs = true;
+		if(ImGui::SliderInt("Labels Tokens X", &myDrawFineTunning.guiInfoTokensPosX, -200, 200))bModifs = true;
+		if(ImGui::SliderInt("Labels Tokens Y", &myDrawFineTunning.guiInfoTokensPosY, -200, 200))bModifs = true;
+		if(ImGui::SliderInt("Bars Tokens X", &myDrawFineTunning.guiTokensBarsX, -200, 200))bModifs = true;
+		if (ImGui::SliderInt("Bars Tokens Y", &myDrawFineTunning.guiTokensBarsY, -200, 200))bModifs = true;
 
+		if(ImGui::SliderInt("Id's Tokens X", &myDrawFineTunning.guiInfoTokensIdsPosX, -200, 200))bModifs = true;
+		ImGui::PopItemWidth();
 		//There should be a more elegant way to.
 		if (bModifs) {
 			for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {

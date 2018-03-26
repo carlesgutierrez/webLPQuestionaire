@@ -9,10 +9,10 @@ class ThemeLocalProjects
 public:
 	ThemeLocalProjects()
 	{
-		col_main_text = ofColor::gray;
-		col_main_head = ofColor::orange;
-		col_main_area = ofColor::green;
+		col_main_text = ofColor::antiqueWhite;
+		col_main_head = ofColor::darkCyan;
+		col_main_area = ofColor::darkCyan;
 		col_win_popup = ofColor::yellow;
-		col_win_backg = ofColor::blue;
+		col_win_backg = ofColor::black;
 	}
 };

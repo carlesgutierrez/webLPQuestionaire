@@ -88,7 +88,7 @@ void QuestionRestFul::draw(int _x, int _y)
 	int marginYTokens = 60;
 
 	ofSetColor(ofColor::white);
-	ofDrawBitmapStringHighlight(theQuestion.question, _x+ myFineTunningDrawGui.guiQuestionPosX, _y+ myFineTunningDrawGui.guiQuestionPosY);
+	ofDrawBitmapStringHighlight(theQuestion.question, _x+ myFineTunningDrawGui.guiQuestionPosX, _y+ myFineTunningDrawGui.guiQuestionPosY, ofColor::darkCyan);
 	ofSetColor(ofColor::darkCyan);
 
 	//draw Text Tokens vertical drawn at left colum
@@ -98,8 +98,13 @@ void QuestionRestFul::draw(int _x, int _y)
 	}
 
 	//Tokens Yes
+	int HZeroSize = 1;
 	for (int i = 0; i < tokenYPosEasing.size(); i++) {
-		ofDrawRectangle(myFineTunningDrawGui.guiTokensBarsX+_x+i*gapXTokens, _y + marginYTokens, w, tokenYPosEasing[i]); // 0 IncomeTax, 1 ... , ..
+		if(tokenYPosEasing[i] == 0)	ofDrawRectangle(myFineTunningDrawGui.guiTokensBarsX + _x + i*gapXTokens, _y + marginYTokens + myFineTunningDrawGui.guiTokensBarsY + HZeroSize, w, HZeroSize*2); // 0 IncomeTax, 1 ... , ..
+		else {
+			ofDrawRectangle(myFineTunningDrawGui.guiTokensBarsX + _x + i*gapXTokens, _y + marginYTokens + myFineTunningDrawGui.guiTokensBarsY, w, tokenYPosEasing[i]); // 0 IncomeTax, 1 ... , ..
+		}
+		
 	}
 
 	//Tokens NO

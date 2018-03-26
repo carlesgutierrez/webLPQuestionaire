@@ -9,12 +9,17 @@
 
 struct fineTunningGuiDraw {
 
-	int guiQuestionPosX = 0;
-	int guiQuestionPosY = 0;
-	int guiInfoTokensPosX = 0;
-	int guiInfoTokensPosY = 0;
-	int guiTokensBarsX = 0;
+	int guiQuestionPosX = -400;
+	int guiQuestionPosY = -80;
+	int guiInfoTokensPosX = 78;
+	int guiInfoTokensPosY = 112;
+	int guiTokensBarsX = 128;
+	int guiTokensBarsY = 0;
 	int guiInfoTokensIdsPosX = 0;
+
+	//Camera
+	int guiCameraPosX = 0;
+	int guiCameraPosY = 11;
 };
 
 struct dataToken { //TODO chahge this direct from JSON format at Defaoult constructor
