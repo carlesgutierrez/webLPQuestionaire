@@ -117,7 +117,9 @@ void FrontEndApp::drawGui() {
 
 	if (myFlowStatus == showingReady2start || point2MyWeb->myQuestions.size() == 0) {
 		if (point2MyWeb->myQuestions.size() == 0) {
-			ImGui::Text("There are no Questions to fill. Go to the webservices to add some!");
+			ImGui::Separator();
+			ImGui::Text("There are no Questions available\n"
+				"Please add some in the Questionaire Manager");
 		}
 		else if (ImGui::Button("READY?", size200)) {
 			myFlowStatus = showingQuestions;
@@ -132,7 +134,7 @@ void FrontEndApp::drawGui() {
 				string myQuestionText = point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.question;
 				static bool read_only = false;
 				//ImGui::InputTextMultiline("##source", myQuestionText.c_str, IM_ARRAYSIZE(myQuestionText.c_str), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0));
-				ImGui::Text(myQuestionText.c_str());
+				ImGui::TextColored(ImVec4(0,255,0,200),myQuestionText.c_str());
 			//}
 
 			ImGui::Text("Please Drag and Drog Yes or Not into ANSWER");

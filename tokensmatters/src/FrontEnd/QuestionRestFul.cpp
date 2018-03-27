@@ -101,10 +101,10 @@ void QuestionRestFul::draw(int _x, int _y)
 
 	//Draw Question
 	ofSetColor(ofColor::white);
-	ofDrawBitmapStringHighlight("#"+ofToString(theQuestion.id)+"->"+theQuestion.question, _x+ myFineTunningDrawGui.guiQuestionPosX, _y+ myFineTunningDrawGui.guiQuestionPosY, ofColor::darkCyan);
-	ofSetColor(ofColor::darkCyan);
-
+	ofDrawBitmapStringHighlight("#"+ofToString(theQuestion.id)+"->"+theQuestion.question, _x+ myFineTunningDrawGui.guiQuestionPosX, _y+ myFineTunningDrawGui.guiQuestionPosY);
+	
 	//draw Text Tokens vertical drawn at left colum
+	ofSetColor(ofColor::darkCyan);
 	vector<string>tokensnamesVertical = theQuestion.dataTokenYes.getMemberNames();//Yes or not same name
 	for (int i = 0; i < tokenYPosEasing.size(); i++) {
 		ofDrawBitmapStringHighlight(tokensnamesVertical[i], _x - tokensNamesMaxWidth + myFineTunningDrawGui.guiInfoTokensPosX, myFineTunningDrawGui.guiInfoTokensPosY + _y + gapYNameTokens * i);

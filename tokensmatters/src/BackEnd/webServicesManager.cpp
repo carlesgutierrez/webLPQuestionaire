@@ -14,17 +14,11 @@ webServicesManager::~webServicesManager()
 //--------------------------------------------
 void webServicesManager::setup()
 {
-	// Load test text.
-	ipsum = ofBufferFromFile("media/ipsum.txt").getText();
-
-
 	ofx::HTTP::JSONRPCServerSettings settings;
-	//settings.setHost("DocumentRoot/index.html"); //localhost/localprojects/index.html --> not work. This addon is an HTTP server it self. 
-	settings.setPort(8197);//8197 //8998(default) //80 or 8080 if its the same as APACH, make  this crash
+	settings.setPort(8197);
 
-						   // Initialize the server.
+	 // Initialize the server.
 	server.setup(settings);
-
 
 	// Register RPC methods.
 	server.registerMethod("get-questions-server",
@@ -62,7 +56,8 @@ void webServicesManager::setup()
 
 void webServicesManager::draw()
 {
-	ofDrawBitmapStringHighlight(userText, ofPoint(14, 18));
+
+
 }
 
 
@@ -101,7 +96,7 @@ void webServicesManager::doPost(ofx::JSONRPC::MethodArgs & args)
 //--------------------------------------------
 void webServicesManager::doGet(ofx::JSONRPC::MethodArgs & args)
 {
-	// Set the result equal to the substring.
+	//Return All questions save in the server
 	args.result = getMyQuestionsData();
 
 	ofLogVerbose("webServicesManager::getQuestions") << args.result;//.asString()
@@ -165,6 +160,7 @@ bool webServicesManager::deleteQuestionData(int auxIdQuestion) {
 //------------------------------------------------------
 ofxJSONElement webServicesManager::getMyQuestionsData()
 {
+	std::unique_lock<std::mutex> lock(mutex);
 
 	ofxJSONElement thatSavedQuestions;
 

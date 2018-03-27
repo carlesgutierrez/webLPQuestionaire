@@ -20,51 +20,37 @@ public:
 
 public: 
 
-	//will return id question created
+	//Add question new
 	void doPost(ofx::JSONRPC::MethodArgs & args);
 
-	//get
+	//get All questions saved
 	void doGet(ofx::JSONRPC::MethodArgs & args);
 	
-	//update
+	//update an specific question
 	void doPatch(ofx::JSONRPC::MethodArgs & args);
 
-	//remove
+	//remove an specific question
 	void doDelete(ofx::JSONRPC::MethodArgs & args);
 
-	//only for develop
+	// myQuestions would not be neceary if we use slite db.
+	// This piece of text might be modified by multiple client threads.
+	// Thus we must use a mutex to protect it during multi-threaded access.
 	vector<QuestionRestFul> myQuestions;
 
 private:
 
-
-	// Registered methods.
-	void updateQuestionId(ofx::JSONRPC::MethodArgs & args);
+	//internal fucntions
 	bool updateQuestionData(int auxIdQuestion, string newQuestion);
 	bool deleteQuestionData(int auxIdQuestion);
-	void getQuestions(ofx::JSONRPC::MethodArgs& args);
+	ofxJSONElement getMyQuestionsData();
 
 	/// \brief The server that handles the JSONRPC requests.
 	ofx::HTTP::JSONRPCServer server;
 
-	/// \brief Get a snippet of random text in a thread-safe way.
-	/// \returns The snippet of random text.
-	ofxJSONElement getMyQuestionsData();
-
 	DbQuestions myDB;
-	bool bVectorDataBaseMode = true;
+	bool bVectorDataBaseMode = true;//set false to use Sqlite ( WIP )
 
 private:
-	// A custom logging channel to mirror all log messages to the web clients.
-	// WebSocketLoggerChannel::SharedPtr loggerChannel;
-
-	// This piece of text might be modified by multiple client threads.
-	// Thus we must use a mutex to protect it during multi-threaded access.
-	std::string ipsum;
-
-	// This piece of text might be modified by multiple client threads.
-	// Thus we must use a mutex to protect it during multi-threaded access.
-	std::string userText;
 
 	// We use a mutex to protect any variables that can be
 	// modified by multiple clients.  In our case, userText must be protected.

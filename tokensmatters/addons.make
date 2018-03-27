@@ -7,6 +7,8 @@ ofxJSON
 ofxJSONRPC
 ofxMediaType
 ofxNetworkUtils
+ofxSimpleHttp
 ofxSQLiteCpp
 ofxSSLManager
 ofxTaskQueue
+ofxThreadedImage
