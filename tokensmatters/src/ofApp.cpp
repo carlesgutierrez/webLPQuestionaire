@@ -32,4 +32,11 @@ void ofApp::exit()
 	ofLogToConsole();
 }
 
+void ofApp::keyPressed(int key)
+{
+	if (key == OF_KEY_TAB) {
+		myFronEnd.bShowingOptionsGui = !myFronEnd.bShowingOptionsGui;
+	}
+}
+
 

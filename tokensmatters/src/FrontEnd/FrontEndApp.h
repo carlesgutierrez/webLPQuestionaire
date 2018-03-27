@@ -10,6 +10,8 @@
 #include "ThemeLocalProjects.h"
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
+enum statusFrontEnd {showingReady2start, showingQuestions, showingViz, showingResultWithCam, showingEnd};
+
 
 class FrontEndApp
 {
@@ -18,17 +20,20 @@ public:
 	~FrontEndApp();
 	void setup(webServicesManager* _webServices);
 	void update();
-	void updateVisualizationTokens();
+	void updateVisualizationTokens(int currentQuestion);
 	void resetQuestionaire();
 	void drawGui();
 	void drawVisualizationsTokens(int x, int y);
-	int getActiveQuestion();
+	//int getActiveQuestion();
 	void draw();
 
 public: 
 
 	//Flow Questionaire
-	bool bReadyToStart;
+	int myTimeBeforePhoto = -1;
+	int timeBeforeTakePhoto = 5;
+	statusFrontEnd myFlowStatus;//init a setup
+	//bool bReadyToStart;
 	vector<ofxJSONElement>answersQuestions;
 	int idCurrentQuestion = 0;
 
@@ -40,6 +45,7 @@ public:
 
 	//Gui
 	ofxImGui::Gui gui;
+	bool bShowingOptionsGui = false;
 	fineTunningGuiDraw myDrawFineTunning;
 
 

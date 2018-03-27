@@ -18,16 +18,18 @@ void FrontEndApp::setup(webServicesManager* _webServices){
 
 	myCam.setup(320, 240);
 
-	//required call
 	gui.setup(new ThemeLocalProjects());
 	//gui.setTheme(new ThemeLocalProjects());
+
+	myFlowStatus = showingReady2start;
+	resetQuestionaire();
 }
 
 
 //--------------------------------------------
 void FrontEndApp::update() {
 
-	updateVisualizationTokens();
+	updateVisualizationTokens(idCurrentQuestion);
 
 	myCam.update();
 }
@@ -50,30 +52,27 @@ void FrontEndApp::draw() {
 	ofRectangle myDrawQuestionaireArea = ofRectangle(posXQuestionareArea, margin, sizeWQuestionareArea - margin, 500);
 	ofDrawRectangle(myDrawQuestionaireArea);
 
-	ofSetColor(255);
-	drawVisualizationsTokens(myDrawQuestionaireArea.getPosition().x, myDrawQuestionaireArea.getPosition().y);
-
+	if (myFlowStatus == showingQuestions || myFlowStatus == showingViz || myFlowStatus == showingResultWithCam) {
+		ofSetColor(255);
+		drawVisualizationsTokens(myDrawQuestionaireArea.getPosition().x, myDrawQuestionaireArea.getPosition().y);
+	}
 	//GUI
 	ofSetColor(255);
 	drawGui();
 }
 
 //--------------------------------------------
-void FrontEndApp::updateVisualizationTokens() {
-	for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
-		point2MyWeb->myQuestions[i].update();
-	}
+void FrontEndApp::updateVisualizationTokens(int _currentQuestionId) { //TODO that should be only our question
+	//for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
+	if(_currentQuestionId<point2MyWeb->myQuestions.size())
+		point2MyWeb->myQuestions[_currentQuestionId].update();
+	//}
 }
 
 //-------------------------------------------
 void FrontEndApp::resetQuestionaire() {
 
-	bReadyToStart = true;
-
 	if(point2MyWeb->myQuestions.size()>0)idCurrentQuestion = 0;
-	else {
-		idCurrentQuestion = -1;
-	}
 
 	//reset of results questionaire
 	answersQuestions.clear();
@@ -93,48 +92,62 @@ void FrontEndApp::drawGui() {
 
 	gui.begin();
 
-	ImGui::Text("///////////////////////////////////////");
+	static bool no_titlebar = true;
+	static bool no_border = true;
+	static bool no_resize = true;
+	static bool no_move = true;
+	static bool no_scrollbar = true;
+	static bool no_collapse = true;
+	static bool no_menu = true;
+	//required call
+	// Demonstrate the various window flags. Typically you would just use the default.
+	ImGuiWindowFlags window_flags = 0;
+	if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
+	//if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
+	//if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
+	//if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
+	//if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
+	//if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
+	//if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
 
-	if (bReadyToStart) {
-		if (ImGui::Button("READY?", size200)) {
-			bReadyToStart = false;
+	//ImGui::SetNextWindowPos(ofVec2f(10, 400), ImGuiSetCond_FirstUseEver);
+	//ImGui::SetNextWindowSize(ImVec2(400, 250), ImGuiSetCond_FirstUseEver);
+	static bool open = true;
+	ImGui::Begin("LocalProjects Demo Questionaire", &open, window_flags);
+
+	if (myFlowStatus == showingReady2start || point2MyWeb->myQuestions.size() == 0) {
+		if (point2MyWeb->myQuestions.size() == 0) {
+			ImGui::Text("There are no Questions to fill. Go to the webservices to add some!");
+		}
+		else if (ImGui::Button("READY?", size200)) {
+			myFlowStatus = showingQuestions;
 		}
 	}
-	else {
+	
+	
+	if(myFlowStatus == showingQuestions){ //Ready to Start Activated with some questions in the server then
 
-		//If there is a question to work with
-		if (point2MyWeb->myQuestions.size()) {
-			if(idCurrentQuestion > -1){
+		if (point2MyWeb->myQuestions.size()>0) {
+			//if(idCurrentQuestion >= 0 && idCurrentQuestion < point2MyWeb->myQuestions.size()){
 				string myQuestionText = point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.question;
 				static bool read_only = false;
 				//ImGui::InputTextMultiline("##source", myQuestionText.c_str, IM_ARRAYSIZE(myQuestionText.c_str), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0));
 				ImGui::Text(myQuestionText.c_str());
+			//}
 
-			}
-
-			
 			ImGui::Text("Please Drag and Drog Yes or Not into ANSWER");
 
+			bool bAnswerDone = false;
 			if (ImGui::Button("YES", size100)) {
-				if (point2MyWeb->myQuestions.size() > idCurrentQuestion) {
-					answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenYes);
-				}
-				if (point2MyWeb->myQuestions.size() - 1 > idCurrentQuestion) {
-					point2MyWeb->myQuestions[idCurrentQuestion].startAnimAnswer();
-					idCurrentQuestion++; //TODO This should come after animation. // Then After WebCam ScreenShoot // Then increase to Next Question.
-				}
+				answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenYes);
+				bAnswerDone = true;
 			}
 
 			ImGui::SameLine();
 
 			if (ImGui::Button("NO", size100)) {
-				if (point2MyWeb->myQuestions.size() > idCurrentQuestion) {
-					answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenNo);
-				}
-				if (point2MyWeb->myQuestions.size() - 1 > idCurrentQuestion) {
-					point2MyWeb->myQuestions[idCurrentQuestion].startAnimAnswer();
-					idCurrentQuestion++; //TODO This should come after animation. // Then After WebCam ScreenShoot // Then increase to Next Question.
-				}
+				answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenNo);
+				bAnswerDone = true;
 			}
 
 			//ImGui::IsItemHovered()
@@ -145,47 +158,93 @@ void FrontEndApp::drawGui() {
 					ImGui::SetTooltip("IsItemActive!");
 				}
 			}
+			//Answer Done, then play animation and change status to Visualization Mode
+			if (bAnswerDone) {
+				myFlowStatus = showingViz;
+				//play start our viz animation
+				point2MyWeb->myQuestions[idCurrentQuestion].startAnimAnswer();
+				myTimeBeforePhoto = ofGetElapsedTimef() + timeBeforeTakePhoto;
+			}
 		}
 
 
-		
 	}
 
+	//---------------------------
+	if (myFlowStatus == showingViz) {
+		ImGui::Text("Here your resulting tokens affected by your answer");
 
-	if (ImGui::Button("Reset Questionaire")) {
-		resetQuestionaire();
+		//One this animation is done there will be an event that will push us to the 
+		//next flow status --> showingResultWithCam 
+
+		//TODO send After WebCam ScreenShoot // Then increase to Next Question.
+		//meanWhile
+		if (myTimeBeforePhoto - ofGetElapsedTimef() < 0) {
+			ofLogVerbose() << "Save a Picture here";
+
+			//TODO this inside a thread. look for an addon
+			//ofImage mySavedResult;
+			//mySavedResult.grabScreen(0,0, ofGetWidth(), ofGetHeight());
+			ofSaveFrame(true);
+
+			myFlowStatus = showingResultWithCam;
+		}
 	}
 
-	ImGui::Text("///////////////////////////////////////");
+	//---------------------------
+	if (myFlowStatus == showingResultWithCam) {
 
-	if (ImGui::Button("Camera settings")){
-		myCam.videoSettings();
-	}
-	if(ImGui::CollapsingHeader("Fine Tunning GUI Items Locations")) {
-		
-		bool bModifs = false;
-		ImGui::PushItemWidth(50);
-		if (ImGui::SliderInt("Camera X", &myDrawFineTunning.guiCameraPosX, -200, 200))bModifs = true;
-		if (ImGui::SliderInt("Camera Y", &myDrawFineTunning.guiCameraPosY, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("Question X", &myDrawFineTunning.guiQuestionPosX, -400, 400))bModifs = true;
-		if(ImGui::SliderInt("Question Y", &myDrawFineTunning.guiQuestionPosY, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("Labels Tokens X", &myDrawFineTunning.guiInfoTokensPosX, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("Labels Tokens Y", &myDrawFineTunning.guiInfoTokensPosY, -200, 200))bModifs = true;
-		if(ImGui::SliderInt("Bars Tokens X", &myDrawFineTunning.guiTokensBarsX, -200, 200))bModifs = true;
-		if (ImGui::SliderInt("Bars Tokens Y", &myDrawFineTunning.guiTokensBarsY, -200, 200))bModifs = true;
 
-		if(ImGui::SliderInt("Id's Tokens X", &myDrawFineTunning.guiInfoTokensIdsPosX, -200, 200))bModifs = true;
-		ImGui::PopItemWidth();
-		//There should be a more elegant way to.
-		if (bModifs) {
-			for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
-				point2MyWeb->myQuestions[i].updateFineTunningGuiDraw(myDrawFineTunning);
+		if (idCurrentQuestion < point2MyWeb->myQuestions.size() - 1) {
+				idCurrentQuestion++;
+				myFlowStatus = showingQuestions;
+		}
+		else if (idCurrentQuestion == point2MyWeb->myQuestions.size() - 1) {
+			ImGui::TextColored(ImVec4(255,0,0,200),
+				"We are Done! \n"
+				"Thanks for your time. \n"
+				"Enjoy your results as pictures\n"
+				" at folder ->bin/data/ \n");
+
+			if (ImGui::Button("Restart!##Questionaire", size200)) {
+				myFlowStatus = showingReady2start;
+				resetQuestionaire();
 			}
 		}
 	}
-	
+
+	if (bShowingOptionsGui) {
+		if (ImGui::CollapsingHeader("GUI options")) {
+			if (ImGui::Button("Camera settings")) {
+				myCam.videoSettings();
+			}
+			if (ImGui::CollapsingHeader("Fine Tunning GUI Items Locations")) {
+
+				bool bModifs = false;
+				ImGui::PushItemWidth(50);
+				if (ImGui::SliderInt("Camera X", &myDrawFineTunning.guiCameraPosX, -200, 200))bModifs = true;
+				if (ImGui::SliderInt("Camera Y", &myDrawFineTunning.guiCameraPosY, -200, 200))bModifs = true;
+				if (ImGui::SliderInt("Question X", &myDrawFineTunning.guiQuestionPosX, -400, 400))bModifs = true;
+				if (ImGui::SliderInt("Question Y", &myDrawFineTunning.guiQuestionPosY, -200, 200))bModifs = true;
+				if (ImGui::SliderInt("Labels Tokens X", &myDrawFineTunning.guiInfoTokensPosX, -200, 200))bModifs = true;
+				if (ImGui::SliderInt("Labels Tokens Y", &myDrawFineTunning.guiInfoTokensPosY, -200, 200))bModifs = true;
+				if (ImGui::SliderInt("Bars Tokens X", &myDrawFineTunning.guiTokensBarsX, -200, 200))bModifs = true;
+				if (ImGui::SliderInt("Bars Tokens Y", &myDrawFineTunning.guiTokensBarsY, -200, 200))bModifs = true;
+
+				if (ImGui::SliderInt("Id's Tokens X", &myDrawFineTunning.guiInfoTokensIdsPosX, -200, 200))bModifs = true;
+				ImGui::PopItemWidth();
+				//There should be a more elegant way to.
+				if (bModifs) {
+					for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
+						point2MyWeb->myQuestions[i].updateFineTunningGuiDraw(myDrawFineTunning);
+					}
+				}
+			}
+		}
+	}
 
 
+	ImGui::End();
 	gui.end();
 }
 
@@ -193,7 +252,6 @@ void FrontEndApp::drawGui() {
 void FrontEndApp::drawVisualizationsTokens(int _x, int _y) {
 
 	//Let's draw just active question
-	idCurrentQuestion = getActiveQuestion();
 
 	int marginX = 100;
 	int marginY = 100;
@@ -203,12 +261,4 @@ void FrontEndApp::drawVisualizationsTokens(int _x, int _y) {
 			point2MyWeb->myQuestions[i].draw(_x+ marginX, _y+ marginY);
 		}
 	}
-}
-
-//-------------------------------------------------
-int FrontEndApp::getActiveQuestion() {
-	int idActive = -1;//This negative index will never happen, always checking inside myQuestions. If MyQuestions is 0 there is no get values in
-	if (point2MyWeb->myQuestions.size() > 0)
-		idActive = idCurrentQuestion;
-	return idActive;
 }

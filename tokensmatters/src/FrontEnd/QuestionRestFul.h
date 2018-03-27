@@ -63,7 +63,7 @@ public:
 	float initTime;
 	float endPosition;
 	std::vector<float> tokenYPosEasing, tokenNPosEasing; //TODO CHECK HOW TO REMOVE THIS
-	bool bStartAnim = false;
+	bool bAnimRunning = false;
 
 private:
 	fineTunningGuiDraw myFineTunningDrawGui;

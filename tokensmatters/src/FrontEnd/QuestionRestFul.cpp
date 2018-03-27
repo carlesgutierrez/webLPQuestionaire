@@ -50,23 +50,29 @@ void QuestionRestFul::update()
 	//update Visualizations
 	//Update
 	if (bStartAnimAnswer) {
-		bStartAnim = true;
+		bAnimRunning = true;
 		initTime = ofGetElapsedTimef();
 		bStartAnimAnswer = false;
 		//TODO send event to FrontEndApp we finished to show our SHow
+
+
 	}
 
-	auto duration = 1.f;
-	auto endTime = initTime + duration;
-	auto now = ofGetElapsedTimef();
-	
-	vector<string>tokensnames = theQuestion.dataTokenYes.getMemberNames();
+	if (bAnimRunning) {
 
-	//incomeTax for now
-	for (int i = 0; i < tokenYPosEasing.size(); i++) {
-		
-		int endPosition = ofMap(theQuestion.dataTokenYes[tokensnames[i]].asFloat(),-5, 5, -100, 100);
-		tokenYPosEasing[i] = ofxeasing::map_clamp(now, initTime, endTime, 0, endPosition, &ofxeasing::linear::easeIn);
+		auto duration = 1.f;
+		auto endTime = initTime + duration;
+		auto now = ofGetElapsedTimef();
+
+		vector<string>tokensnames = theQuestion.dataTokenYes.getMemberNames();
+
+		//incomeTax for now
+		for (int i = 0; i < tokenYPosEasing.size(); i++) {
+
+			int endPosition = ofMap(theQuestion.dataTokenYes[tokensnames[i]].asFloat(), -5, 5, -100, 100);
+			tokenYPosEasing[i] = ofxeasing::map_clamp(now, initTime, endTime, 0, endPosition, &ofxeasing::linear::easeIn);
+
+		}
 
 	}
 
@@ -93,8 +99,9 @@ void QuestionRestFul::draw(int _x, int _y)
 	int gapYNameTokens = 20;
 	int marginYTokens = 60;
 
+	//Draw Question
 	ofSetColor(ofColor::white);
-	ofDrawBitmapStringHighlight(theQuestion.question, _x+ myFineTunningDrawGui.guiQuestionPosX, _y+ myFineTunningDrawGui.guiQuestionPosY, ofColor::darkCyan);
+	ofDrawBitmapStringHighlight("#"+ofToString(theQuestion.id)+"->"+theQuestion.question, _x+ myFineTunningDrawGui.guiQuestionPosX, _y+ myFineTunningDrawGui.guiQuestionPosY, ofColor::darkCyan);
 	ofSetColor(ofColor::darkCyan);
 
 	//draw Text Tokens vertical drawn at left colum
@@ -179,6 +186,10 @@ void QuestionRestFul::simulateTokensValues()
 void QuestionRestFul::resetAnimations()
 {
 	bStartAnimAnswer = true; //Reset
+	bAnimRunning = false;
+	for (int i = 0; i < tokenYPosEasing.size(); i++) {
+		tokenYPosEasing[i] = 0;//Reset Animations
+	}
 }
 
 
