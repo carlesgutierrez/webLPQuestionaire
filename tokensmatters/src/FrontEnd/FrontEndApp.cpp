@@ -140,26 +140,52 @@ void FrontEndApp::drawGui() {
 			ImGui::Text("Please Drag and Drog Yes or Not into ANSWER");
 
 			bool bAnswerDone = false;
-			if (ImGui::Button("YES", size100)) {
-				answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenYes);
-				bAnswerDone = true;
+			ImGui::Button("YES", size100);
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("Drag&Drop YES");
+				if (ImGui::IsItemActive()) {
+					ImGui::SetTooltip("Drop me at Answer Button");
+					bDragAndDropY = true;
+				}
 			}
+
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("NO", size100)) {
-				answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenNo);
-				bAnswerDone = true;
-			}
-
-			//ImGui::IsItemHovered()
-			ImGui::Button("ANSWER", size200);
+			ImGui::Button("NO", size100);
 			if (ImGui::IsItemHovered()) {
-				ImGui::SetTooltip("DragHere YES or NOT");
+				ImGui::SetTooltip("Drag&Drop NO");
 				if (ImGui::IsItemActive()) {
-					ImGui::SetTooltip("IsItemActive!");
+					bDragAndDropN = true;
 				}
 			}
+
+			ofSetColor(ofColor::white);
+			if(bDragAndDropN)ofDrawBitmapStringHighlight("NO", ofPoint(ofGetMouseX(), ofGetMouseY()));
+			if(bDragAndDropY)ofDrawBitmapStringHighlight("YES", ofPoint(ofGetMouseX(), ofGetMouseY()));
+
+			ImGui::Separator();
+			ImGui::Separator();
+
+			ImGui::Button("ANSWER", size200);
+			if (ImGui::IsMouseReleased(0) && ImGui::IsItemHoveredRect()) {
+				if (bDragAndDropY || bDragAndDropN) {
+
+					if (bDragAndDropN) {
+						bAnswerDone = true;
+						answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenNo);
+					}
+					if (bDragAndDropY) {
+						bAnswerDone = true;
+						answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenYes);
+					}
+
+					bDragAndDropN = false;
+					bDragAndDropY = false;
+
+				}
+			}
+
 			//Answer Done, then play animation and change status to Visualization Mode
 			if (bAnswerDone) {
 				myFlowStatus = showingViz;

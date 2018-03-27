@@ -47,6 +47,9 @@ public:
 	ofxImGui::Gui gui;
 	bool bShowingOptionsGui = false;
 	fineTunningGuiDraw myDrawFineTunning;
+	//DragAndDrop
+	bool bDragAndDropY = false;
+	bool bDragAndDropN = false;
 
 
 	
