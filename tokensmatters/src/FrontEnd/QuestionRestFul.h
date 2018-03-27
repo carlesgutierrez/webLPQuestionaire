@@ -9,8 +9,8 @@
 
 struct fineTunningGuiDraw {
 
-	int guiQuestionPosX = -400;
-	int guiQuestionPosY = -80;
+	int guiQuestionPosX = -67;
+	int guiQuestionPosY = -100;
 	int guiInfoTokensPosX = 78;
 	int guiInfoTokensPosY = 112;
 	int guiTokensBarsX = 128;
@@ -46,20 +46,23 @@ public:
 	~QuestionRestFul();
 
 	void setup();
+	void startAnimAnswer();
 	void update();
 	void updateFineTunningGuiDraw(fineTunningGuiDraw myFineTunningDrawGui);
 	void draw(int x, int y);
 	
 	void simulateTokensValues();
+	void resetAnimations();
 
 	dataQuestion theQuestion;
 	
 
 public: 
 	//vars for visualization
+	bool bStartAnimAnswer = false;
 	float initTime;
 	float endPosition;
-	std::vector<float> tokenYPosEasing, tokenNPosEasing;
+	std::vector<float> tokenYPosEasing, tokenNPosEasing; //TODO CHECK HOW TO REMOVE THIS
 	bool bStartAnim = false;
 
 private:

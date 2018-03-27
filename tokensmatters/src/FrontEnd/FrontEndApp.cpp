@@ -65,10 +65,99 @@ void FrontEndApp::updateVisualizationTokens() {
 	}
 }
 
+//-------------------------------------------
+void FrontEndApp::resetQuestionaire() {
+
+	bReadyToStart = true;
+
+	if(point2MyWeb->myQuestions.size()>0)idCurrentQuestion = 0;
+	else {
+		idCurrentQuestion = -1;
+	}
+
+	//reset of results questionaire
+	answersQuestions.clear();
+	answersQuestions.resize(point2MyWeb->myQuestions.size());
+	
+	for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
+		point2MyWeb->myQuestions[i].resetAnimations();
+	}
+
+}
+
 
 //--------------------------------------------
 void FrontEndApp::drawGui() {
+	ImVec2 size100 = ImVec2(50, 50);
+	ImVec2 size200 = ImVec2(100, 100);
+
 	gui.begin();
+
+	ImGui::Text("///////////////////////////////////////");
+
+	if (bReadyToStart) {
+		if (ImGui::Button("READY?", size200)) {
+			bReadyToStart = false;
+		}
+	}
+	else {
+
+		//If there is a question to work with
+		if (point2MyWeb->myQuestions.size()) {
+			if(idCurrentQuestion > -1){
+				string myQuestionText = point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.question;
+				static bool read_only = false;
+				//ImGui::InputTextMultiline("##source", myQuestionText.c_str, IM_ARRAYSIZE(myQuestionText.c_str), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0));
+				ImGui::Text(myQuestionText.c_str());
+
+			}
+
+			
+			ImGui::Text("Please Drag and Drog Yes or Not into ANSWER");
+
+			if (ImGui::Button("YES", size100)) {
+				if (point2MyWeb->myQuestions.size() > idCurrentQuestion) {
+					answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenYes);
+				}
+				if (point2MyWeb->myQuestions.size() - 1 > idCurrentQuestion) {
+					point2MyWeb->myQuestions[idCurrentQuestion].startAnimAnswer();
+					idCurrentQuestion++; //TODO This should come after animation. // Then After WebCam ScreenShoot // Then increase to Next Question.
+				}
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("NO", size100)) {
+				if (point2MyWeb->myQuestions.size() > idCurrentQuestion) {
+					answersQuestions.push_back(point2MyWeb->myQuestions[idCurrentQuestion].theQuestion.dataTokenNo);
+				}
+				if (point2MyWeb->myQuestions.size() - 1 > idCurrentQuestion) {
+					point2MyWeb->myQuestions[idCurrentQuestion].startAnimAnswer();
+					idCurrentQuestion++; //TODO This should come after animation. // Then After WebCam ScreenShoot // Then increase to Next Question.
+				}
+			}
+
+			//ImGui::IsItemHovered()
+			ImGui::Button("ANSWER", size200);
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("DragHere YES or NOT");
+				if (ImGui::IsItemActive()) {
+					ImGui::SetTooltip("IsItemActive!");
+				}
+			}
+		}
+
+
+		
+	}
+
+
+	if (ImGui::Button("Reset Questionaire")) {
+		resetQuestionaire();
+	}
+
+	ImGui::Text("///////////////////////////////////////");
+
 	if (ImGui::Button("Camera settings")){
 		myCam.videoSettings();
 	}
@@ -94,7 +183,7 @@ void FrontEndApp::drawGui() {
 			}
 		}
 	}
-	ImGui::Text("Please reply following questions. Yes or Not");
+	
 
 
 	gui.end();
@@ -104,13 +193,13 @@ void FrontEndApp::drawGui() {
 void FrontEndApp::drawVisualizationsTokens(int _x, int _y) {
 
 	//Let's draw just active question
-	int idQuestionActive = getActiveQuestion();
+	idCurrentQuestion = getActiveQuestion();
 
 	int marginX = 100;
 	int marginY = 100;
 
 	for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
-		if (idQuestionActive == i) {
+		if (idCurrentQuestion == i) {
 			point2MyWeb->myQuestions[i].draw(_x+ marginX, _y+ marginY);
 		}
 	}
@@ -118,5 +207,8 @@ void FrontEndApp::drawVisualizationsTokens(int _x, int _y) {
 
 //-------------------------------------------------
 int FrontEndApp::getActiveQuestion() {
-	return point2MyWeb->myQuestions.size()-1;
+	int idActive = -1;//This negative index will never happen, always checking inside myQuestions. If MyQuestions is 0 there is no get values in
+	if (point2MyWeb->myQuestions.size() > 0)
+		idActive = idCurrentQuestion;
+	return idActive;
 }

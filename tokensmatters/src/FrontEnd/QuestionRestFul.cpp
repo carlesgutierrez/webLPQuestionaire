@@ -39,15 +39,21 @@ void QuestionRestFul::setup()
 	simulateTokensValues();
 }
 
+//--------------------------------------------
+void QuestionRestFul::startAnimAnswer() {
+	bStartAnimAnswer = true;
+}
 
 //--------------------------------------------
 void QuestionRestFul::update()
 {
 	//update Visualizations
 	//Update
-	if (ofGetKeyPressed()) {
+	if (bStartAnimAnswer) {
 		bStartAnim = true;
 		initTime = ofGetElapsedTimef();
+		bStartAnimAnswer = false;
+		//TODO send event to FrontEndApp we finished to show our SHow
 	}
 
 	auto duration = 1.f;
@@ -81,7 +87,7 @@ void QuestionRestFul::draw(int _x, int _y)
 	//draw Visualizations
 	ofSetColor(ofColor::darkCyan);
 	
-	auto w = 20;
+	int w = 20;
 	int tokensNamesMaxWidth = 150;
 	int gapXTokens = 100;
 	int gapYNameTokens = 20;
@@ -97,12 +103,18 @@ void QuestionRestFul::draw(int _x, int _y)
 		ofDrawBitmapStringHighlight(tokensnamesVertical[i], _x - tokensNamesMaxWidth + myFineTunningDrawGui.guiInfoTokensPosX, myFineTunningDrawGui.guiInfoTokensPosY + _y + gapYNameTokens * i);
 	}
 
+	ofSetColor(ofColor::black);
+	//Simple line in the middle of the chart
+	int middleHeightChartViz = _y + marginYTokens + myFineTunningDrawGui.guiTokensBarsY;
+	ofLine(myFineTunningDrawGui.guiTokensBarsX + _x, middleHeightChartViz, myFineTunningDrawGui.guiTokensBarsX + _x + (tokenYPosEasing.size()-1)*gapXTokens + w, middleHeightChartViz);
+
+	ofSetColor(ofColor::darkCyan);
 	//Tokens Yes
 	int HZeroSize = 1;
 	for (int i = 0; i < tokenYPosEasing.size(); i++) {
 		if(tokenYPosEasing[i] == 0)	ofDrawRectangle(myFineTunningDrawGui.guiTokensBarsX + _x + i*gapXTokens, _y + marginYTokens + myFineTunningDrawGui.guiTokensBarsY + HZeroSize, w, HZeroSize*2); // 0 IncomeTax, 1 ... , ..
 		else {
-			ofDrawRectangle(myFineTunningDrawGui.guiTokensBarsX + _x + i*gapXTokens, _y + marginYTokens + myFineTunningDrawGui.guiTokensBarsY, w, tokenYPosEasing[i]); // 0 IncomeTax, 1 ... , ..
+			ofDrawRectangle(myFineTunningDrawGui.guiTokensBarsX + _x + i*gapXTokens, middleHeightChartViz, w, tokenYPosEasing[i]); // 0 IncomeTax, 1 ... , ..
 		}
 		
 	}
@@ -161,6 +173,12 @@ void QuestionRestFul::simulateTokensValues()
 
 	ofLogVerbose() << "Random tokens No:" << theQuestion.dataTokenNo;
 
+}
+
+//-------------------------------------------
+void QuestionRestFul::resetAnimations()
+{
+	bStartAnimAnswer = true; //Reset
 }
 
 
