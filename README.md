@@ -1,6 +1,6 @@
 # webLPQuestionaire
 
-This is a simple App (TokensMatters App) that manage to edit a formularie of questions in a local database and a interaective App that promtp you all questions and a few interactions.
+This is a simple App (TokensMatters App) that manage to edit a formularie of questions in a local database and an "interactive App" that promtp questions from server and play a quesionaire with them.
 
 
 # Installation

@@ -45,7 +45,7 @@ void FrontEndApp::setupShader() {
 	}
 #endif
 
-	imageMask.loadImage("mask1.jpg");
+	imageMask.loadImage("mask.jpg");
 	fbo.allocate(myCam.getWidth(), myCam.getHeight());
 	maskFbo.allocate(myCam.getWidth(), myCam.getHeight());
 }
