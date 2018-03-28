@@ -16,16 +16,39 @@ void FrontEndApp::setup(webServicesManager* _webServices){
 
 	point2MyWeb = _webServices;  // now I can have access everywhere in my app
 
+	//Camera and Shader
 	myCam.setup(320, 240);
 	imgCam.allocate(ofGetWidth(),ofGetHeight(), OF_IMAGE_COLOR);
+	setupShader();
 
+	//Gui
 	gui.setup(new ThemeLocalProjects());
-	//gui.setTheme(new ThemeLocalProjects());
 
+
+	//Status Flow
 	myFlowStatus = showingReady2start;
 	resetQuestionaire();
+
+
 }
 
+//------------------------------------------
+void FrontEndApp::setupShader() {
+#ifdef TARGET_OPENGLES
+	shader.load("shadersES2/shader");
+#else
+	if (ofIsGLProgrammableRenderer()) {
+		shader.load("shadersGL3/shader");
+	}
+	else {
+		shader.load("shadersGL2/shader");
+	}
+#endif
+
+	imageMask.loadImage("mask1.jpg");
+	fbo.allocate(myCam.getWidth(), myCam.getHeight());
+	maskFbo.allocate(myCam.getWidth(), myCam.getHeight());
+}
 
 //--------------------------------------------
 void FrontEndApp::update() {
@@ -38,6 +61,38 @@ void FrontEndApp::update() {
 //--------------------------------------------
 void FrontEndApp::draw() {
 
+	///Shaders
+
+	//------------------------------------------- draw to mask fbo.
+	maskFbo.begin();
+
+	ofClear(255, 0, 0, 255);
+
+	//float imageMaskX = ofGetMouseX() / (float)ofGetWidth();
+	//imageMaskX = ofClamp(imageMaskX, 0, 1);
+	//imageMaskX = -(imageMask.getWidth() - maskFbo.getWidth()) * imageMaskX;
+	imageMask.draw(0, 0);
+
+	maskFbo.end();
+
+	//------------------------------------------- draw to final fbo.
+	fbo.begin();
+	ofClear(0, 0, 0, 255);
+
+	shader.begin();
+	shader.setUniformTexture("tex0", myCam.getTextureReference(), 1);
+	//shader.setUniformTexture("tex1", image, 2);
+	//shader.setUniformTexture("tex2", movie.getTextureReference(), 3);
+	shader.setUniformTexture("imageMask", maskFbo.getTextureReference(), 4);
+
+	// we are drawing this fbo so it is used just as a frame.
+	maskFbo.draw(0, 0);
+
+	shader.end();
+	fbo.end();
+
+
+	//////////////////////////////
 	int margin = 10;
 
 	ofSetColor(ofColor::lightGray);
@@ -45,7 +100,9 @@ void FrontEndApp::draw() {
 	ofDrawRectangle(myCameraArea);
 
 	ofSetColor(255);
-	myCam.draw(myCameraArea.getPosition().x, myCameraArea.getPosition().y+ myDrawFineTunning.guiCameraPosY);
+	//myCam.draw(myCameraArea.getPosition().x, myCameraArea.getPosition().y+ myDrawFineTunning.guiCameraPosY);
+	fbo.draw(myCameraArea.getPosition().x, myCameraArea.getPosition().y+ myDrawFineTunning.guiCameraPosY);
+
 
 	ofSetColor(ofColor::white);
 	int posXQuestionareArea = myCam.getWidth() + margin;

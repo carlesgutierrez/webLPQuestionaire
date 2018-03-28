@@ -21,6 +21,7 @@ public:
 	FrontEndApp();
 	~FrontEndApp();
 	void setup(webServicesManager* _webServices);
+	void setupShader();
 	void update();
 	void updateVisualizationTokens(int currentQuestion);
 	void resetQuestionaire();
@@ -28,6 +29,9 @@ public:
 	void drawVisualizationsTokens(int x, int y);
 	//int getActiveQuestion();
 	void draw();
+
+	//Main access to Data -> Questions
+	webServicesManager* point2MyWeb;
 
 public: 
 
@@ -39,23 +43,28 @@ public:
 	vector<ofxJSONElement>answersQuestions;
 	int idCurrentQuestion = 0;
 
-public: 
 
-	webServicesManager* point2MyWeb;
-	ofVideoGrabber myCam;
-	ofxThreadedImage imgCam;
-
-
+public:
 
 	//Gui
 	ofxImGui::Gui gui;
 	bool bShowingOptionsGui = false;
 	fineTunningGuiDraw myDrawFineTunning;
+
+public:
+
 	//DragAndDrop
 	bool bDragAndDropY = false;
 	bool bDragAndDropN = false;
 
+public:
 
+	ofVideoGrabber myCam;
+	ofxThreadedImage imgCam;
+	ofShader shader;
+	ofFbo fbo;
+	ofFbo maskFbo;
+	ofImage imageMask;
 	
 };
 
