@@ -81,6 +81,7 @@ void FrontEndApp::resetQuestionaire() {
 	
 	for (int i = 0; i < point2MyWeb->myQuestions.size(); i++) {
 		point2MyWeb->myQuestions[i].resetAnimations();
+		point2MyWeb->myQuestions[i].simulateTokensValues(); //Simulate New Tokens?
 	}
 
 }
@@ -124,6 +125,7 @@ void FrontEndApp::drawGui() {
 		}
 		else if (ImGui::Button("READY?", size200)) {
 			myFlowStatus = showingQuestions;
+
 		}
 	}
 	
@@ -145,7 +147,7 @@ void FrontEndApp::drawGui() {
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetTooltip("Drag&Drop YES");
 				if (ImGui::IsItemActive()) {
-					ImGui::SetTooltip("Drop me at Answer Button");
+					//ImGui::SetTooltip("Drop me at Answer Button");
 					bDragAndDropY = true;
 				}
 			}
@@ -157,13 +159,14 @@ void FrontEndApp::drawGui() {
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetTooltip("Drag&Drop NO");
 				if (ImGui::IsItemActive()) {
+					//ImGui::SetTooltip("Drop me at Answer Button");
 					bDragAndDropN = true;
 				}
 			}
 
 			ofSetColor(ofColor::white);
-			if(bDragAndDropN)ofDrawBitmapStringHighlight("NO", ofPoint(ofGetMouseX(), ofGetMouseY()));
-			if(bDragAndDropY)ofDrawBitmapStringHighlight("YES", ofPoint(ofGetMouseX(), ofGetMouseY()));
+			if (bDragAndDropN)ofDrawBitmapStringHighlight("NO", ofPoint(ofGetMouseX(), ofGetMouseY()), ofColor::green, ofColor::blue);
+			if(bDragAndDropY)ofDrawBitmapStringHighlight("YES", ofPoint(ofGetMouseX(), ofGetMouseY()), ofColor::red, ofColor::blue);
 
 			ImGui::Separator();
 			ImGui::Separator();
@@ -187,6 +190,12 @@ void FrontEndApp::drawGui() {
 				}
 			}
 
+			//Taking care of this case. outside desired location. Reset Action drag and drop
+			if ((bDragAndDropY || bDragAndDropN) && ImGui::IsMouseReleased(0)) {
+				bDragAndDropY = false;
+				bDragAndDropN = false;
+			}
+
 			//Answer Done, then play animation and change status to Visualization Mode
 			if (bAnswerDone) {
 				myFlowStatus = showingViz;
@@ -205,30 +214,20 @@ void FrontEndApp::drawGui() {
 		string progressText = "Let's take a photo in ["+ofToString(progress, 0)+" seconds]";
 		ImGui::TextColored(ImVec4(0,255,0,200),progressText.c_str());
 
-		//One this animation is done there will be an event that will push us to the 
-		//next flow status --> showingResultWithCam 
-
-		//TODO send After WebCam ScreenShoot // Then increase to Next Question.
-		//meanWhile
 		if (myTimeBeforePhoto - ofGetElapsedTimef() < 0) {
-			ofLogVerbose() << "Save a Picture here";
 
-			//TODO this inside a thread. look for an addon
-			//ofImage mySavedResult;
-			//mySavedResult.grabScreen(0,0, ofGetWidth(), ofGetHeight());
-			imgCam.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-			//ofSaveFrame(true);
+			imgCam.grabScreen(0, 0, ofGetWidth(), ofGetHeight());//ofSaveFrame(true);
+
 			string nameImage = ofToString(idCurrentQuestion, 0);
-			//imgCam.saveThreaded("/ImagesResult/"+nameImage+"out.jpg", OF_IMAGE_QUALITY_MEDIUM);
 			imgCam.saveThreaded(nameImage + "out.jpg", OF_IMAGE_QUALITY_MEDIUM);
 
+			//Next level
 			myFlowStatus = showingResultWithCam;
 		}
 	}
 
 	//---------------------------
 	if (myFlowStatus == showingResultWithCam) {
-
 
 		if (idCurrentQuestion < point2MyWeb->myQuestions.size() - 1) {
 				idCurrentQuestion++;

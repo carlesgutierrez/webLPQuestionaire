@@ -26,6 +26,8 @@ QuestionRestFul::QuestionRestFul()
 	//For Drawing
 	tokenYPosEasing.resize(4);
 	tokenNPosEasing.resize(4);
+
+	simulateTokensValues();
 }
 
 //--------------------------------------------
@@ -36,7 +38,7 @@ QuestionRestFul::~QuestionRestFul()
 //--------------------------------------------
 void QuestionRestFul::setup()
 {
-	simulateTokensValues();
+
 }
 
 //--------------------------------------------
@@ -185,10 +187,13 @@ void QuestionRestFul::simulateTokensValues()
 //-------------------------------------------
 void QuestionRestFul::resetAnimations()
 {
-	bStartAnimAnswer = true; //Reset
+	bStartAnimAnswer = false; //Reset
 	bAnimRunning = false;
 	for (int i = 0; i < tokenYPosEasing.size(); i++) {
 		tokenYPosEasing[i] = 0;//Reset Animations
+		tokenNPosEasing[i] = 0;//Reset Animations
+		//cout << "tokenYPosEasing[" + ofToString(i,0) + "]=0" << endl;
+		//cout << "tokenNPosEasing[" + ofToString(i, 0) + "]=0" << endl;
 	}
 }
 
