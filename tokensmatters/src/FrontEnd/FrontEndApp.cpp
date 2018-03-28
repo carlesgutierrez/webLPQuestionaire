@@ -17,6 +17,7 @@ void FrontEndApp::setup(webServicesManager* _webServices){
 	point2MyWeb = _webServices;  // now I can have access everywhere in my app
 
 	myCam.setup(320, 240);
+	imgCam.allocate(ofGetWidth(),ofGetHeight(), OF_IMAGE_COLOR);
 
 	gui.setup(new ThemeLocalProjects());
 	//gui.setTheme(new ThemeLocalProjects());
@@ -200,7 +201,9 @@ void FrontEndApp::drawGui() {
 
 	//---------------------------
 	if (myFlowStatus == showingViz) {
-		ImGui::Text("Here your resulting tokens affected by your answer");
+		float progress = ofMap(myTimeBeforePhoto - ofGetElapsedTimef(), 5, 0, 5, 0);
+		string progressText = "Let's take a photo in ["+ofToString(progress, 0)+" seconds]";
+		ImGui::TextColored(ImVec4(0,255,0,200),progressText.c_str());
 
 		//One this animation is done there will be an event that will push us to the 
 		//next flow status --> showingResultWithCam 
@@ -213,7 +216,11 @@ void FrontEndApp::drawGui() {
 			//TODO this inside a thread. look for an addon
 			//ofImage mySavedResult;
 			//mySavedResult.grabScreen(0,0, ofGetWidth(), ofGetHeight());
-			ofSaveFrame(true);
+			imgCam.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+			//ofSaveFrame(true);
+			string nameImage = ofToString(idCurrentQuestion, 0);
+			//imgCam.saveThreaded("/ImagesResult/"+nameImage+"out.jpg", OF_IMAGE_QUALITY_MEDIUM);
+			imgCam.saveThreaded(nameImage + "out.jpg", OF_IMAGE_QUALITY_MEDIUM);
 
 			myFlowStatus = showingResultWithCam;
 		}
@@ -228,13 +235,9 @@ void FrontEndApp::drawGui() {
 				myFlowStatus = showingQuestions;
 		}
 		else if (idCurrentQuestion == point2MyWeb->myQuestions.size() - 1) {
-			ImGui::TextColored(ImVec4(255,0,0,200),
-				"We are Done! \n"
-				"Thanks for your time. \n"
-				"Enjoy your results as pictures\n"
-				" at folder ->bin/data/ \n");
 
-			if (ImGui::Button("Restart!##Questionaire", size200)) {
+			if (ImGui::Button("Thanks!\n"
+				"Restart?##Questionaire", size200)) {
 				myFlowStatus = showingReady2start;
 				resetQuestionaire();
 			}

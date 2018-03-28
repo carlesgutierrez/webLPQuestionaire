@@ -5,10 +5,12 @@
 #include "QuestionRestFul.h"
 #include "webServicesManager.h"
 //#include "SQLiteCpp.h"
+#include "ofxThreadedImage.h"
 
 #include "ofxImGui.h"
 #include "ThemeLocalProjects.h"
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
 
 enum statusFrontEnd {showingReady2start, showingQuestions, showingViz, showingResultWithCam, showingEnd};
 
@@ -41,6 +43,8 @@ public:
 
 	webServicesManager* point2MyWeb;
 	ofVideoGrabber myCam;
+	ofxThreadedImage imgCam;
+
 
 
 	//Gui
