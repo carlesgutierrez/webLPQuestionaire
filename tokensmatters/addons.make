@@ -1,4 +1,3 @@
-ofxColorGradient
 ofxEasing
 ofxHTTP
 ofxImGui

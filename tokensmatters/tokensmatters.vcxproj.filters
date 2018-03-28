@@ -28,9 +28,6 @@
 		<ClCompile Include="src\ofApp.cpp">
 			<Filter>src</Filter>
 		</ClCompile>
-		<ClCompile Include="..\..\..\addons\ofxColorGradient\src\ofxColorGradient.cpp">
-			<Filter>addons\ofxColorGradient\src</Filter>
-		</ClCompile>
 		<ClCompile Include="..\..\..\addons\ofxHTTP\libs\ofxHTTP\src\AuthScope.cpp">
 			<Filter>addons\ofxHTTP\libs\ofxHTTP\src</Filter>
 		</ClCompile>
@@ -390,12 +387,6 @@
 		<Filter Include="addons">
 			<UniqueIdentifier>{71834F65-F3A9-211E-73B8-DC85}</UniqueIdentifier>
 		</Filter>
-		<Filter Include="addons\ofxColorGradient">
-			<UniqueIdentifier>{B0A44A88-7A21-A786-BFE9-8111}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="addons\ofxColorGradient\src">
-			<UniqueIdentifier>{C862548D-A48C-6CFA-0BA1-3F43}</UniqueIdentifier>
-		</Filter>
 		<Filter Include="addons\ofxEasing">
 			<UniqueIdentifier>{CAD580FB-01DB-F456-F00B-7791}</UniqueIdentifier>
 		</Filter>
@@ -685,9 +676,6 @@
 		</ClInclude>
 		<ClInclude Include="src\ofApp.h">
 			<Filter>src</Filter>
-		</ClInclude>
-		<ClInclude Include="..\..\..\addons\ofxColorGradient\src\ofxColorGradient.h">
-			<Filter>addons\ofxColorGradient\src</Filter>
 		</ClInclude>
 		<ClInclude Include="..\..\..\addons\ofxEasing\src\easing_terms_of_use.html">
 			<Filter>addons\ofxEasing\src</Filter>
